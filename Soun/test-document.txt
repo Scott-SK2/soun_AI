@@ -1,0 +1,11 @@
+Course Exclusivity Test Document
+
+This is a test document to verify that course exclusivity is working properly in the student study assistant application.
+
+Key concepts:
+- Machine Learning fundamentals
+- Neural networks and deep learning
+- Data preprocessing techniques
+- Model evaluation methods
+
+This document should only appear in the specific course it's uploaded to and not leak into other courses.

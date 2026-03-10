@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-File Search Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .form-group { margin: 20px 0; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+        input, select { padding: 12px; width: 100%; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result { margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa; }
+        .error { border-color: #dc3545; background: #f8d7da; color: #721c24; }
+        .success { border-color: #28a745; background: #d4edda; color: #155724; }
+        .document-result { background: white; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin: 10px 0; }
+        .relevance-score { background: #007bff; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
+        .ai-summary { background: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin: 15px 0; }
+        .sources { margin-top: 15px; }
+        .source-tag { background: #f1f3f4; padding: 4px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 12px; }
+        .examples { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 15px; margin: 20px 0; }
+        .example-query { background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 5px 0; cursor: pointer; border: 1px solid #dee2e6; }
+        .example-query:hover { background: #e9ecef; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Cross-File Search Test</h1>
+        <p>Test the intelligent cross-file search that navigates through different uploaded documents to find relevant information.</p>
+
+        <div class="examples">
+            <h3>Example Queries to Try:</h3>
+            <div class="example-query" onclick="setQuery('What is machine learning?')">
+                "What is machine learning?"
+            </div>
+            <div class="example-query" onclick="setQuery('Find information about neural networks')">
+                "Find information about neural networks"
+            </div>
+            <div class="example-query" onclick="setQuery('Show me content about business ecosystems')">
+                "Show me content about business ecosystems"
+            </div>
+            <div class="example-query" onclick="setQuery('How do startups scale their technology?')">
+                "How do startups scale their technology?"
+            </div>
+            <div class="example-query" onclick="setQuery('Explain the concept of entrepreneurship')">
+                "Explain the concept of entrepreneurship"
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="searchQuery">Search Query:</label>
+            <input type="text" id="searchQuery" placeholder="Ask a question or search for specific topics..." />
+        </div>
+
+        <div class="form-group">
+            <label for="courseFilter">Filter by Course (Optional):</label>
+            <select id="courseFilter">
+                <option value="">Search all courses</option>
+                <option value="tew3008">TEW3008 - Machine Learning</option>
+                <option value="math101">MATH101 - Calculus</option>
+                <option value="cs202">CS202 - Data Structures</option>
+                <option value="phys105">PHYS105 - Physics I</option>
+                <option value="eng201">ENG201 - Advanced Writing</option>
+            </select>
+        </div>
+
+        <button id="searchBtn" onclick="performSearch()">🔍 Search Across Files</button>
+
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function setQuery(query) {
+            document.getElementById('searchQuery').value = query;
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('searchQuery').value.trim();
+            const courseFilter = document.getElementById('courseFilter').value;
+            const resultDiv = document.getElementById('result');
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (!query) {
+                showResult('Please enter a search query.', 'error');
+                return;
+            }
+
+            searchBtn.disabled = true;
+            searchBtn.textContent = '🔍 Searching...';
+
+            const payload = {
+                query: query,
+                maxResults: 5
+            };
+
+            if (courseFilter) {
+                payload.courseId = courseFilter;
+            }
+
+            try {
+                const response = await fetch('/api/search/documents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    displaySearchResults(result);
+                } else {
+                    showResult(`❌ Search Failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                showResult(`❌ Search Error: ${error.message}`, 'error');
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = '🔍 Search Across Files';
+            }
+        }
+
+        function displaySearchResults(results) {
+            let html = `
+                <h3>📊 Search Results for: "${results.query}"</h3>
+                <p><strong>Documents searched:</strong> ${results.totalDocuments} | <strong>Relevant found:</strong> ${results.relevantDocuments.length}</p>
+            `;
+
+            if (results.synthesizedAnswer) {
+                html += `
+                    <div class="ai-summary">
+                        <h4>🤖 AI-Generated Summary</h4>
+                        <p>${results.synthesizedAnswer}</p>
+                    </div>
+                `;
+            }
+
+            if (results.sources && results.sources.length > 0) {
+                html += `
+                    <div class="sources">
+                        <strong>📚 Sources:</strong><br>
+                        ${results.sources.map(source => `<span class="source-tag">${source}</span>`).join('')}
+                    </div>
+                `;
+            }
+
+            if (results.relevantDocuments.length > 0) {
+                html += `<h4>📄 Document Details</h4>`;
+                
+                results.relevantDocuments.forEach(doc => {
+                    const relevancePercent = Math.round(doc.relevanceScore * 100);
+                    html += `
+                        <div class="document-result">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                                <h5 style="margin: 0;">${doc.title}</h5>
+                                <span class="relevance-score">${relevancePercent}% relevant</span>
+                            </div>
+                            <p><strong>File:</strong> ${doc.filename} | <strong>Course:</strong> ${doc.courseId}</p>
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                                ${doc.relevantContent}
+                            </div>
+                            ${doc.summary ? `<p><em>${doc.summary}</em></p>` : ''}
+                        </div>
+                    `;
+                });
+            } else {
+                html += `
+                    <div style="text-align: center; padding: 40px;">
+                        <h4>🔍 No Relevant Documents Found</h4>
+                        <p>Try uploading more course materials or using different search terms.</p>
+                    </div>
+                `;
+            }
+
+            showResult(html, 'success');
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+</body>
+</html>

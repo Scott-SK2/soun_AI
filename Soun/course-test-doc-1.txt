@@ -1,0 +1,15 @@
+TEW3008 Machine Learning Course Material
+
+Chapter 1: Introduction to Neural Networks
+- Perceptrons and basic learning algorithms
+- Backpropagation fundamentals
+- Gradient descent optimization
+- Activation functions: ReLU, Sigmoid, Tanh
+
+Key concepts for TEW3008:
+- Supervised vs Unsupervised Learning
+- Feature engineering and data preprocessing
+- Model evaluation metrics (accuracy, precision, recall)
+- Overfitting and regularization techniques
+
+This document should ONLY appear in TEW3008 course materials.

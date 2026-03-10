@@ -1,0 +1,15 @@
+TEW3007 Web Development Course Material
+
+Chapter 1: Frontend Development Fundamentals
+- HTML5 semantic elements and structure
+- CSS3 advanced layouts with Flexbox and Grid
+- JavaScript ES6+ modern features
+- React component architecture and hooks
+
+Key concepts for TEW3007:
+- Responsive web design principles
+- DOM manipulation and event handling
+- API integration and fetch operations
+- State management with React Context
+
+This document should ONLY appear in TEW3007 course materials.

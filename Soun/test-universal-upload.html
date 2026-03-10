@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal File Upload Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-group { margin: 20px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { padding: 8px; width: 300px; margin-bottom: 10px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa; }
+        .error { border-color: #dc3545; background: #f8d7da; color: #721c24; }
+        .success { border-color: #28a745; background: #d4edda; color: #155724; }
+        .file-types { margin: 20px 0; }
+        .file-types h3 { color: #007bff; }
+        .file-types ul { columns: 2; }
+    </style>
+</head>
+<body>
+    <h1>🗂️ Universal File Upload Test</h1>
+    <p>Test the upload functionality with any file type. All files should be accepted and stored successfully.</p>
+    
+    <div class="file-types">
+        <h3>Supported File Types</h3>
+        <ul>
+            <li>📄 Documents: PDF, Word, PowerPoint, Text</li>
+            <li>🖼️ Images: JPG, PNG, GIF, SVG</li>
+            <li>💾 Code: JS, HTML, CSS, JSON, XML</li>
+            <li>📊 Data: CSV, Excel, TXT</li>
+            <li>🎵 Media: Audio, Video files</li>
+            <li>📦 Archives: ZIP, RAR</li>
+            <li>📝 Any other file type</li>
+        </ul>
+    </div>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="courseId">Course ID:</label>
+            <select id="courseId" name="courseId" required>
+                <option value="">Select a course...</option>
+                <option value="tew3008">TEW3008 - Machine Learning</option>
+                <option value="math101">MATH101 - Calculus</option>
+                <option value="cs202">CS202 - Data Structures</option>
+                <option value="phys105">PHYS105 - Physics I</option>
+                <option value="eng201">ENG201 - Advanced Writing</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="courseName">Course Name:</label>
+            <input type="text" id="courseName" name="courseName" placeholder="e.g., TEW3008 - Machine Learning" required>
+        </div>
+
+        <div class="form-group">
+            <label for="file">Choose Any File:</label>
+            <input type="file" id="file" name="file" required>
+            <small>Select any file type - all formats are supported!</small>
+        </div>
+
+        <button type="submit">🚀 Upload File</button>
+    </form>
+
+    <div id="result" class="result" style="display: none;"></div>
+
+    <script>
+        // Auto-fill course name when course ID is selected
+        document.getElementById('courseId').addEventListener('change', function() {
+            const courseNames = {
+                'tew3008': 'TEW3008 - Machine Learning',
+                'math101': 'MATH101 - Calculus',
+                'cs202': 'CS202 - Data Structures',
+                'phys105': 'PHYS105 - Physics I',
+                'eng201': 'ENG201 - Advanced Writing'
+            };
+            document.getElementById('courseName').value = courseNames[this.value] || '';
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            const fileInput = document.getElementById('file');
+            const courseId = document.getElementById('courseId').value;
+            const courseName = document.getElementById('courseName').value;
+
+            if (!fileInput.files[0] || !courseId || !courseName) {
+                showResult('Please fill in all fields and select a file.', 'error');
+                return;
+            }
+
+            formData.append('file', fileInput.files[0]);
+            formData.append('courseId', courseId);
+            formData.append('courseName', courseName);
+
+            showResult('⏳ Uploading file... This may take a moment for analysis.', 'info');
+
+            try {
+                const response = await fetch('/api/documents/upload', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showResult(`
+                        ✅ <strong>Upload Successful!</strong><br>
+                        📁 File: ${result.document.filename}<br>
+                        📚 Course: ${result.document.courseId}<br>
+                        🔧 File Type: ${result.document.fileType}<br>
+                        📝 Content Preview: ${result.document.content ? result.document.content.substring(0, 200) + '...' : 'Binary file processed'}<br>
+                        🤖 AI Analysis: ${result.analysis ? 'Completed' : 'Skipped (still uploaded successfully)'}<br>
+                        ${result.analysis ? `🎯 Key Topics: ${result.analysis.keyTopics.join(', ')}` : ''}
+                    `, 'success');
+                } else {
+                    showResult(`❌ Upload Failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showResult(`❌ Upload Error: ${error.message}`, 'error');
+            }
+        });
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

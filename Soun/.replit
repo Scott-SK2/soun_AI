@@ -1,0 +1,112 @@
+modules = ["nodejs-20", "web", "postgresql-16"]
+run = "npm run dev"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+packages = ["lsof"]
+
+[deployment]
+deploymentTarget = "autoscale"
+build = ["sh", "-c", "npm run build"]
+run = ["sh", "-c", "npm run start"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[[ports]]
+localPort = 33315
+externalPort = 8000
+
+[[ports]]
+localPort = 33655
+externalPort = 5000
+
+[[ports]]
+localPort = 33979
+externalPort = 3003
+
+[[ports]]
+localPort = 34249
+externalPort = 5173
+
+[[ports]]
+localPort = 35149
+externalPort = 4200
+
+[[ports]]
+localPort = 36067
+externalPort = 8080
+
+[[ports]]
+localPort = 36293
+externalPort = 3002
+
+[[ports]]
+localPort = 36307
+externalPort = 8099
+
+[[ports]]
+localPort = 36879
+externalPort = 6800
+
+[[ports]]
+localPort = 40783
+externalPort = 8008
+
+[[ports]]
+localPort = 43377
+externalPort = 9000
+
+[[ports]]
+localPort = 44355
+externalPort = 6000
+
+[[ports]]
+localPort = 46095
+externalPort = 8081
+
+[[ports]]
+localPort = 46181
+externalPort = 3001
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Run"
+author = 40908910
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"

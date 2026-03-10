@@ -1,0 +1,22 @@
+
+{
+  "name": "Soun - Your Personal Learning Assistant",
+  "short_name": "Soun",
+  "description": "AI-powered learning platform with voice assistance",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "generated-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "orientation": "portrait-primary"
+}
