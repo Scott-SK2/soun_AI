@@ -49,7 +49,7 @@ class TestExtractDefinitions:
 
 class TestExtractKeypoints:
     def test_bullet_extraction(self):
-        text = "• Firms must reduce costs\n• Quality matters a lot\n• Speed is critical"
+        text = "• Firms must reduce production costs to stay competitive\n• Quality management matters a great deal\n• Speed and agility are critical for market success"
         kps = _extract_keypoints(text)
         assert len(kps) >= 2
 
