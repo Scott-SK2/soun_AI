@@ -1,0 +1,352 @@
+{
+  "version": 1,
+  "courses": {
+    "default_course": {
+      "course_id": "default_course",
+      "baseline": 0.1,
+      "study_time_sec": 30.817494,
+      "quiz_scores": [],
+      "concepts": {
+        "sustaining-superior-performance": {
+          "concept_id": "sustaining-superior-performance",
+          "concept_title": "Sustaining Superior Performance",
+          "good_answers": 6,
+          "bad_answers": 10,
+          "explanation_good": 0,
+          "explanation_bad": 0,
+          "example_good": 0,
+          "example_bad": 0,
+          "last_similarity": 0.6394580602645874,
+          "last_coverage": 0.25,
+          "mastery_score": 0.5641702284336093
+        }
+      }
+    }
+  },
+  "events": [
+    {
+      "ts": 1772230756.9374282,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772230757.249685,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772231331.9679198,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772231332.2015035,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772231417.2032182,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772231417.465587,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772310482.4170594,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772310482.6297913,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772310707.7183175,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772310707.9885588,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772310921.6408718,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772310921.8923163,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772475625.8277018,
+      "event_type": "session_start",
+      "course_id": "default_course",
+      "concept_id": null,
+      "concept_title": null,
+      "verdict": null,
+      "similarity": null,
+      "coverage_ratio": null,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772475654.2943883,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772475654.5149622,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772475654.6421182,
+      "event_type": "session_end",
+      "course_id": "default_course",
+      "concept_id": null,
+      "concept_title": null,
+      "verdict": null,
+      "similarity": null,
+      "coverage_ratio": null,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772476357.0344098,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.0,
+      "coverage_ratio": 0.0,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772476368.9935048,
+      "event_type": "session_start",
+      "course_id": "default_course",
+      "concept_id": null,
+      "concept_title": null,
+      "verdict": null,
+      "similarity": null,
+      "coverage_ratio": null,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772476370.9953992,
+      "event_type": "session_end",
+      "course_id": "default_course",
+      "concept_id": null,
+      "concept_title": null,
+      "verdict": null,
+      "similarity": null,
+      "coverage_ratio": null,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    },
+    {
+      "ts": 1772476876.344767,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.6394580602645874,
+      "coverage_ratio": 0.25,
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null
+    }
+  ],
+  "sessions": {
+    "default_course": [
+      {
+        "start": "2026-02-27T22:19:17.840265",
+        "end": "2026-02-27T22:19:44.234529",
+        "events": 0
+      },
+      {
+        "start": "2026-02-27T22:28:52.485244",
+        "end": "2026-02-27T22:29:13.662011",
+        "events": 0
+      },
+      {
+        "start": "2026-02-27T22:30:17.756679",
+        "end": "2026-02-27T22:30:37.640564",
+        "events": 0
+      },
+      {
+        "start": "2026-02-28T20:28:02.896345",
+        "end": "2026-02-28T20:28:24.305868",
+        "events": 0
+      },
+      {
+        "start": "2026-02-28T20:31:48.335886",
+        "end": "2026-02-28T20:32:14.893839",
+        "events": 0
+      },
+      {
+        "start": "2026-02-28T20:35:22.223457",
+        "end": "2026-02-28T20:35:49.035557",
+        "events": 0
+      },
+      {
+        "start": "2026-03-02T18:20:25.827701",
+        "end": "2026-03-02T18:20:54.642118",
+        "events": 0
+      },
+      {
+        "start": "2026-03-02T18:32:48.992322",
+        "end": "2026-03-02T18:32:50.995399",
+        "events": 0
+      }
+    ]
+  }
+}

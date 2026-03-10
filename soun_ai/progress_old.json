@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "courses": {
+    "default_course": {
+      "course_id": "default_course",
+      "baseline": 0.1,
+      "course_progress": 0.3400630687057973,
+      "quiz_scores": [],
+      "concepts": {
+        "sustaining-superior-performance": {
+          "concept_id": "sustaining-superior-performance",
+          "concept_title": "Sustaining Superior Performance",
+          "good_answers": 2,
+          "bad_answers": 2,
+          "explanation_good": 0,
+          "explanation_bad": 0,
+          "example_good": 0,
+          "example_bad": 0,
+          "last_similarity": 0.630574107170105,
+          "last_coverage": 0.25,
+          "mastery_score": 0.3400630687057973
+        }
+      }
+    }
+  },
+  "sessions": {
+    "default_course": [
+      {
+        "start": "2026-02-27T17:16:59.776761",
+        "end": "2026-02-27T17:17:28.982359",
+        "events": 0
+      }
+    ]
+  },
+  "events": [
+    {
+      "ts": 1772212618.4235506,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "covered_points": [
+        "Explores sustainability in the face of imitation, substitution, slack and holdup • recognize the threat of imitation • if imitation cannot be blocked"
+      ],
+      "missing_points": [
+        "Sustaining Superior Performance",
+        "This module focuses on dynamics",
+        "account for scope and speed • other generic threats • We propose strategic responses to these threats"
+      ],
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null,
+      "duration_sec": null
+    },
+    {
+      "ts": 1772212618.7111025,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "covered_points": [
+        "Explores sustainability in the face of imitation, substitution, slack and holdup • recognize the threat of imitation • if imitation cannot be blocked"
+      ],
+      "missing_points": [
+        "Sustaining Superior Performance",
+        "This module focuses on dynamics",
+        "account for scope and speed • other generic threats • We propose strategic responses to these threats"
+      ],
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null,
+      "duration_sec": null
+    },
+    {
+      "ts": 1772212619.1626487,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "FAIL",
+      "similarity": 0.4149631857872009,
+      "coverage_ratio": 0.25,
+      "covered_points": [
+        "Explores sustainability in the face of imitation, substitution, slack and holdup • recognize the threat of imitation • if imitation cannot be blocked"
+      ],
+      "missing_points": [
+        "Sustaining Superior Performance",
+        "This module focuses on dynamics",
+        "account for scope and speed • other generic threats • We propose strategic responses to these threats"
+      ],
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null,
+      "duration_sec": null
+    },
+    {
+      "ts": 1772212619.444934,
+      "event_type": "answer_check",
+      "course_id": "default_course",
+      "concept_id": "sustaining-superior-performance",
+      "concept_title": "Sustaining Superior Performance",
+      "verdict": "PASS",
+      "similarity": 0.630574107170105,
+      "coverage_ratio": 0.25,
+      "covered_points": [
+        "Explores sustainability in the face of imitation, substitution, slack and holdup • recognize the threat of imitation • if imitation cannot be blocked"
+      ],
+      "missing_points": [
+        "Sustaining Superior Performance",
+        "This module focuses on dynamics",
+        "account for scope and speed • other generic threats • We propose strategic responses to these threats"
+      ],
+      "quiz_score": null,
+      "quiz_total": null,
+      "quiz_correct": null,
+      "difficulty": null,
+      "duration_sec": null
+    }
+  ]
+}
