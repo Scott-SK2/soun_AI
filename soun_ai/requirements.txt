@@ -1,0 +1,22 @@
+# Core
+anthropic>=0.25.0
+
+# Document ingestion
+pypdf>=4.0.0
+pymupdf>=1.24.0
+python-pptx>=0.6.23
+Pillow>=10.0.0
+
+# OCR
+easyocr>=1.7.1
+numpy>=1.24.0
+
+# Semantic / embeddings
+sentence-transformers>=2.7.0
+
+# SSL
+certifi>=2024.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0

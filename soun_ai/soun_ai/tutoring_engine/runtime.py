@@ -55,6 +55,8 @@ class TutoringRuntime:
         fail_threshold: float = 0.55,
         point_threshold: float = 0.52,
         min_points_to_pass: int = 1,
+        user_id: str = "default",
+        course_id: str = "default_course",
     ):
         self.concepts = concept_index
         self.semantic_engine = SemanticEngine()
@@ -71,9 +73,9 @@ class TutoringRuntime:
         self.tutor = AdaptiveTutorEngine(concept_index)
         self.state = RuntimeState()
 
-        # Progress tracking
-        self.course_id = "default_course"  # later: real course id per user/course
-        self.progress = ProgressTracker()  # should auto-load progress.json
+        # Multi-user: each user gets their own progress file
+        self.course_id = course_id
+        self.progress = ProgressTracker(user_id=user_id)
 
     # -------------------------
     # Course ingestion
