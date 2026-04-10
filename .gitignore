@@ -1,3 +1,6 @@
 soun_ai/.venv/
 __pycache__/
 *.pyc
+soun_ai/logs/
+*.log
+.env
