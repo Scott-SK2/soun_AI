@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from llm_engine.claude_client import ask, ask_json
+from llm_engine.openai_client import ask, ask_json
 from utils.logger import get_logger
 
 log = get_logger(__name__)

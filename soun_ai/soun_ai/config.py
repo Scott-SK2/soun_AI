@@ -69,7 +69,7 @@ MASTERY_DIMINISH_PER_ATT: float = 0.03
 MASTERY_DIMINISH_FLOOR:   float = 0.40
 
 # ── LLM engine (Phase 2) ───────────────────────────────────────────────────
-ANTHROPIC_API_KEY: str = os.environ.get("ANTHROPIC_API_KEY", "")
-LLM_MODEL: str = os.environ.get("LLM_MODEL", "claude-sonnet-4-6")
+OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
+LLM_MODEL: str = os.environ.get("LLM_MODEL", "gpt-4o")
 LLM_MAX_TOKENS: int = 2048
 LLM_TEMPERATURE: float = 0.4

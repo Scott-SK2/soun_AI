@@ -1,18 +1,18 @@
 """
-soun_AI LLM Engine — Claude-powered capabilities.
+soun_AI LLM Engine — OpenAI GPT-4o powered capabilities.
 
-Replaces OpenAI in the Soun project:
-    - quiz_generator      ← quiz-generation-service.ts
-    - flashcard_generator ← flashcard-service.ts
+Replaces OpenAI in the Soun project (same key, same model, new architecture):
+    - quiz_generator        ← quiz-generation-service.ts
+    - flashcard_generator   ← flashcard-service.ts
     - study_guide_generator ← study-guide-service.ts
-    - image_analyzer      ← document-analysis-service.ts (vision)
-    - diagram_generator   ← visual-generation-service.ts
-    - voice_nlp           ← openai-service.ts
+    - image_analyzer        ← document-analysis-service.ts (vision)
+    - diagram_generator     ← visual-generation-service.ts
+    - voice_nlp             ← openai-service.ts
 
-All calls go through claude_client.py.
-Configure via ANTHROPIC_API_KEY environment variable.
+All calls go through openai_client.py.
+Configure via OPENAI_API_KEY environment variable (same key as Soun).
 """
-from llm_engine.claude_client import ask, ask_json, ask_vision
+from llm_engine.openai_client import ask, ask_json, ask_vision
 from llm_engine.quiz_generator import generate_quiz, evaluate_quiz_answers, QuizQuestion, QuizResult
 from llm_engine.flashcard_generator import generate_flashcards, evaluate_flashcard_answer, Flashcard
 from llm_engine.study_guide_generator import generate_study_guide, generate_document_summary, generate_teaching_explanation

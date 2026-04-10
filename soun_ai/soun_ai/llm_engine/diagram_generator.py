@@ -9,7 +9,7 @@ import re
 from dataclasses import dataclass
 from typing import List, Optional
 
-from llm_engine.claude_client import ask
+from llm_engine.openai_client import ask
 from utils.logger import get_logger
 
 log = get_logger(__name__)
