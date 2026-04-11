@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
-from llm_engine.openai_client import ask_vision, ask_json
+from llm_engine.llm_client import ask_vision, ask_json
 from utils.logger import get_logger
 from document_intelligence.document_store import DocChunk
 

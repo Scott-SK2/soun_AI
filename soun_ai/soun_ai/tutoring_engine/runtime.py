@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 
 import re
 
@@ -10,6 +10,49 @@ from document_intelligence.document_store import DocumentStore, DocChunk
 from tutoring_engine.semantic_validation import SemanticValidator, ValidationResult
 from tutoring_engine.adaptive_tutor import AdaptiveTutorEngine, TutorTurn, is_confused
 from tutoring_engine.progress import ProgressTracker
+
+# ── Topic-switch detection helpers ─────────────────────────────────────────
+
+_STOP_WORDS: Set[str] = {
+    "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
+    "have", "has", "had", "do", "does", "did", "will", "would", "shall",
+    "should", "may", "might", "must", "can", "could", "to", "of", "in",
+    "on", "at", "by", "for", "with", "about", "what", "how", "why",
+    "when", "where", "who", "i", "me", "my", "you", "your", "we", "our",
+    "it", "its", "this", "that", "these", "those", "and", "or", "but",
+    "not", "no", "so", "if", "as",
+}
+
+_QUESTION_STARTS: tuple = (
+    "what", "how", "why", "when", "where", "who", "which",
+    "can you", "could you", "explain", "define", "tell me",
+    "describe", "what is", "what are",
+)
+
+
+def _tokenize(text: str) -> Set[str]:
+    """Return meaningful lowercase words (stop-words removed)."""
+    words = re.findall(r"[a-zA-Z]{3,}", text.lower())
+    return {w for w in words if w not in _STOP_WORDS}
+
+
+def _relatedness(a: str, b: str) -> float:
+    """Jaccard similarity between the two texts' keyword sets."""
+    ta, tb = _tokenize(a), _tokenize(b)
+    if not ta or not tb:
+        return 0.0
+    return len(ta & tb) / len(ta | tb)
+
+
+def _looks_like_question(text: str) -> bool:
+    """True if the message reads as a new question rather than an answer."""
+    t = text.strip().lower()
+    if t.endswith("?"):
+        return True
+    return any(t.startswith(s) for s in _QUESTION_STARTS)
+
+
+_TOPIC_SWITCH_THRESHOLD: float = 0.10   # below this Jaccard → likely topic switch
 
 
 def _clean_topic(q: str) -> str:
@@ -276,11 +319,32 @@ class TutoringRuntime:
     # Main tutoring flow
     # -------------------------
 
+    def _is_topic_switch(self, new_question: str) -> bool:
+        """
+        Return True when the student appears to be changing topic mid-session.
+        Conditions: the new message looks like a question AND has low keyword
+        overlap with the most recent topic/check.
+        """
+        if not self.state.last_topic_or_check:
+            return False
+        if not _looks_like_question(new_question):
+            return False
+        sim = _relatedness(new_question, self.state.last_topic_or_check)
+        return sim < _TOPIC_SWITCH_THRESHOLD
+
     def answer_question(self, question: str) -> TutorTurn:
         """
         Answer a student question using retrieved course chunks (no LLM).
         Returns an explanation + adaptive Check question.
+
+        If the student switches topic mid-session, the runtime detects it and
+        resets any pending 'awaiting student knowledge' state gracefully.
         """
+        # Detect topic switch and clean up stale state
+        if self._is_topic_switch(question):
+            self.state.awaiting_student_knowledge = False
+            self.state.last_concept_guess = None
+
         raw_topic = _clean_topic(question)
 
         matched = self._match_question_to_concept(question)
@@ -457,7 +521,23 @@ class TutoringRuntime:
     def correct(self, check_question: str, student_answer: str, grade: ValidationResult) -> TutorTurn:
         self.state.last_topic_or_check = check_question
 
-        turn = self.tutor.correct_failed_answer(check_question, student_answer, grade)
+        missing_points = []
+        try:
+            missing_points = (grade.evidence or {}).get("missing_points", []) or []
+        except Exception:
+            missing_points = []
+
+        concept_title = getattr(grade, "concept_title", None) or _extract_topic_from_check(check_question)
+
+        # Prefer gap-targeted explanation (uses LLM if available, falls back gracefully)
+        if missing_points:
+            turn = self.tutor.targeted_explain(
+                concept_title=concept_title,
+                student_answer=student_answer,
+                missing_points=missing_points,
+            )
+        else:
+            turn = self.tutor.correct_failed_answer(check_question, student_answer, grade)
 
         # Adaptive next check
         if grade and getattr(grade, "concept_id", None) and getattr(grade, "concept_title", None):
@@ -469,12 +549,6 @@ class TutoringRuntime:
             )
 
         # Add 1 good doc snippet for missing points (if any)
-        missing_points = []
-        try:
-            missing_points = (grade.evidence or {}).get("missing_points", []) or []
-        except Exception:
-            missing_points = []
-
         query = f"{turn.target_concept or ''} " + " ".join(missing_points[:3])
         hits = self.docs.query(query, top_k=3)
 
