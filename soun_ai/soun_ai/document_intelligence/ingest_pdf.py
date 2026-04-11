@@ -1,82 +1,76 @@
 from __future__ import annotations
 from typing import List, Optional
 import os
-import re
-import os, ssl, certifi
+import ssl
+import certifi
+
 os.environ["SSL_CERT_FILE"] = certifi.where()
 ssl._create_default_https_context = ssl.create_default_context
 
+import numpy as np
 from pypdf import PdfReader
 import fitz  # pymupdf
 from PIL import Image
-import numpy as np
-import easyocr
 
 from document_intelligence.document_store import DocChunk
-from document_intelligence.ingest_pptx import _chunk_text  # reuse chunker
+from utils.text_utils import clean_text, chunk_text
+from utils.ocr_singleton import get_ocr_reader
+from utils.logger import get_logger
+from config import OCR_MIN_CHARS, OCR_DPI, OCR_LANGUAGES_PDF
+
+log = get_logger(__name__)
 
 
-def _clean(text: str) -> str:
-    text = text.replace("\x00", " ")
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
-
-
-# Create reader once (slow to init)
-_EASY_OCR_READER = None
-
-def _get_ocr_reader():
-    global _EASY_OCR_READER
-    if _EASY_OCR_READER is not None:
-        return _EASY_OCR_READER
-    try:
-        _EASY_OCR_READER = easyocr.Reader(["en"], gpu=False)
-        return _EASY_OCR_READER
-    except Exception as e:
-        print("[OCR] EasyOCR init failed:", e)
-        return None
-
-
-def _ocr_image(pil_img: Image.Image) -> str:
-    reader = _get_ocr_reader()
+def _ocr_page(pil_img: Image.Image) -> str:
+    reader = get_ocr_reader(OCR_LANGUAGES_PDF)
     if reader is None:
         return ""
-    img = np.array(pil_img)
-    results = reader.readtext(img, detail=0)
-    return _clean(" ".join(results))
+    results = reader.readtext(np.array(pil_img), detail=0)
+    return clean_text(" ".join(results))
 
 
-def ingest_pdf(path: str, source_name: Optional[str] = None, ocr_min_chars: int = 40) -> List[DocChunk]:
+def ingest_pdf(
+    path: str,
+    source_name: Optional[str] = None,
+    ocr_min_chars: int = OCR_MIN_CHARS,
+) -> List[DocChunk]:
     """
     Extract PDF text with pypdf.
-    If a page has too little text, render page and OCR it.
+    Falls back to EasyOCR for pages with too little selectable text.
     """
     source = source_name or os.path.basename(path)
     out: List[DocChunk] = []
 
-    # 1) Text extraction
-    reader = PdfReader(path)
+    try:
+        reader = PdfReader(path)
+        doc = fitz.open(path)
+    except Exception as exc:
+        log.error("Failed to open PDF '%s': %s", path, exc)
+        return out
 
-    # 2) Also open with pymupdf for rendering when needed
-    doc = fitz.open(path)
+    try:
+        for page_idx, page in enumerate(reader.pages, start=1):
+            raw_text = clean_text(page.extract_text() or "")
 
-    for page_idx, page in enumerate(reader.pages, start=1):
-        raw_text = page.extract_text() or ""
-        raw_text = _clean(raw_text)
+            if len(raw_text) >= ocr_min_chars:
+                for ch in chunk_text(raw_text):
+                    out.append(DocChunk(text=ch, source=source, page=page_idx, kind="pdf_text"))
+                continue
 
-        if len(raw_text) >= ocr_min_chars:
-            for ch in _chunk_text(raw_text):
-                out.append(DocChunk(text=ch, source=source, page=page_idx, kind="pdf_text"))
-            continue
+            # OCR fallback
+            try:
+                pix = doc.load_page(page_idx - 1).get_pixmap(dpi=OCR_DPI)
+                pil = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                ocr_text = _ocr_page(pil)
+                if ocr_text:
+                    for ch in chunk_text(ocr_text):
+                        out.append(DocChunk(text=ch, source=source, page=page_idx, kind="ocr_text"))
+                else:
+                    log.debug("Page %d of '%s': no text via OCR either", page_idx, source)
+            except Exception as exc:
+                log.warning("OCR failed for page %d of '%s': %s", page_idx, source, exc)
+    finally:
+        doc.close()
 
-        # OCR fallback
-        pix = doc.load_page(page_idx - 1).get_pixmap(dpi=200)
-        pil = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-        ocr_text = _ocr_image(pil)
-
-        if ocr_text:
-            for ch in _chunk_text(ocr_text):
-                out.append(DocChunk(text=ch, source=source, page=page_idx, kind="ocr_text"))
-
-    doc.close()
+    log.info("Ingested PDF '%s': %d chunks from %d pages", source, len(out), len(reader.pages))
     return out

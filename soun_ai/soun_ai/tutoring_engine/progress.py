@@ -8,7 +8,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 from dataclasses import fields
-DEFAULT_START_PERCENT = 10
+
+from config import (
+    MASTERY_BASELINE, MASTERY_READY_FOR_EXAM, MASTERY_UNDERSTANDING,
+    MASTERY_DELTA_GOOD, MASTERY_DELTA_BAD, MASTERY_EXPL_FACTOR,
+    MASTERY_DIMINISH_PER_ATT, MASTERY_DIMINISH_FLOOR,
+    PROGRESS_FILE,
+)
+from utils.logger import get_logger
+
+log = get_logger(__name__)
+
+DEFAULT_START_PERCENT = int(MASTERY_BASELINE * 100)
 
 EventType = Literal[
     "answer_check",     # PASS/FAIL to a Check
@@ -43,9 +54,9 @@ class ConceptStats:
     mastery_score: float = 0.10  # will be clamped to course baseline minimum
 
     def status(self) -> str:
-        if self.mastery_score >= 0.75:
+        if self.mastery_score >= MASTERY_READY_FOR_EXAM:
             return "ready_for_exam"
-        if self.mastery_score >= 0.40:
+        if self.mastery_score >= MASTERY_UNDERSTANDING:
             return "understanding"
         return "not_ready"
 
@@ -148,11 +159,18 @@ class ProgressTracker:
     - Stores to a stable absolute progress.json path by default.
     """
 
-    def __init__(self, path: str | None = None):
+    def __init__(self, path: str | None = None, user_id: str = "default"):
+        """
+        Args:
+            path: explicit path to the progress JSON file.
+                  Defaults to <project_root>/progress_<user_id>.json
+                  so each user gets their own file.
+            user_id: logical user identifier (enables multi-user support).
+        """
+        self.user_id = user_id
         if path is None:
-            # project root = .../soun_ai (one level above soun_ai/soun_ai)
-            project_root = Path(__file__).resolve().parents[2]
-            path = str(project_root / "progress.json")
+            fname = f"progress_{user_id}.json" if user_id != "default" else "progress.json"
+            path = str(PROGRESS_FILE.parent / fname)
 
         self.path = path
 
@@ -315,28 +333,21 @@ class ProgressTracker:
         cs.last_coverage = float(coverage_ratio or 0.0)
 
         # ----- mastery update (0..1) -----
-        # Base: correct answers increase mastery, wrong decrease.
-        delta = 0.0
-        delta += 0.10 if is_good else -0.08
-
-        # Coverage and similarity support the mastery update
+        delta = MASTERY_DELTA_GOOD if is_good else MASTERY_DELTA_BAD
         delta += 0.08 * cs.last_coverage
         delta += 0.05 * cs.last_similarity
 
-        # Explanations/examples are stronger evidence of understanding
         if event_type in ("explanation", "example"):
-            delta *= 1.25
+            delta *= MASTERY_EXPL_FACTOR
 
-        # Diminishing returns: as attempts increase, each event moves mastery less
         attempts = (
             cs.good_answers + cs.bad_answers +
             cs.explanation_good + cs.explanation_bad +
             cs.example_good + cs.example_bad
         )
-        delta *= max(0.4, 1.0 - attempts * 0.03)
+        delta *= max(MASTERY_DIMINISH_FLOOR, 1.0 - attempts * MASTERY_DIMINISH_PER_ATT)
 
-        # Clamp to [baseline..1]
-        baseline = float(course.baseline or (DEFAULT_START_PERCENT / 100.0))
+        baseline = float(course.baseline or MASTERY_BASELINE)
         cs.mastery_score = max(baseline, min(1.0, cs.mastery_score + delta))
 
         # Log event
