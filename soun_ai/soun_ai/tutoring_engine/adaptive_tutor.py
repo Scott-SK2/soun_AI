@@ -12,12 +12,27 @@ CONFUSION_PATTERNS = [
     "can you explain", "explain again", "can you repeat"
 ]
 
+# Checks that are too vague / yes-no — force a re-roll when detected
+BAD_CHECK_PATTERNS = [
+    "do you understand", "did you understand", "are you sure",
+    "is that clear", "make sense", "does that make sense",
+    "got it", "ok?", "okay?",
+]
+
+
 def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", s.strip().lower())
+
 
 def is_confused(text: str) -> bool:
     t = _norm(text)
     return any(p in t for p in CONFUSION_PATTERNS)
+
+
+def _has_bad_check(check: str) -> bool:
+    """Return True if a Check question is too vague (yes/no style)."""
+    t = _norm(check)
+    return any(p in t for p in BAD_CHECK_PATTERNS)
 
 @dataclass
 class TutorTurn:
@@ -154,9 +169,107 @@ class AdaptiveTutorEngine:
 
     def _make_check(self, concept: str, original_check_or_topic: str) -> str:
         if original_check_or_topic.strip().lower().startswith("check:") and concept.lower() in original_check_or_topic.lower():
-            return original_check_or_topic.strip()
-        return random.choice([
-            f"Check: Define {concept} in one sentence.",
-            f"Check: What is {concept}?",
-            f"Check: Explain {concept} briefly."
-        ])
+            check = original_check_or_topic.strip()
+        else:
+            check = random.choice([
+                f"Check: Define {concept} in one sentence.",
+                f"Check: What is {concept}?",
+                f"Check: Explain {concept} briefly."
+            ])
+        # Safety net: never emit a vague yes/no check
+        if _has_bad_check(check):
+            check = f"Check: In one sentence, define {concept}."
+        return check
+
+    # ── Gap diagnosis (LLM-assisted) ───────────────────────────────────────
+
+    def diagnose_gaps(
+        self,
+        concept_title: str,
+        student_answer: str,
+        missing_points: List[str],
+        language: str = "en",
+    ) -> Dict:
+        """
+        Use the LLM to produce a structured Known / Gaps / Focus analysis.
+        Falls back to a simple dict when the LLM engine is unavailable.
+
+        Returns:
+            {"known": [...], "gaps": [...], "focus": str}
+        """
+        if not missing_points:
+            return {"known": [], "gaps": [], "focus": f"Review {concept_title}."}
+
+        try:
+            from llm_engine.llm_client import ask_json
+        except ImportError:
+            # Graceful degradation — no LLM available
+            return {
+                "known": [],
+                "gaps": missing_points[:3],
+                "focus": missing_points[0],
+            }
+
+        lang_note = "" if language == "en" else f" Respond in {language}."
+        prompt = (
+            f"A student is learning about '{concept_title}'.\n"
+            f"Student answer: {student_answer}\n"
+            f"Missing points: {missing_points}\n\n"
+            f"Return JSON with keys:\n"
+            f"  known  – list of things the student already understands (from their answer)\n"
+            f"  gaps   – list of the top missing points (max 3, in plain simple words)\n"
+            f"  focus  – one sentence: the single most important thing to fix first\n"
+            f"{lang_note}"
+        )
+        try:
+            result = ask_json(prompt)
+            if isinstance(result, dict) and "gaps" in result:
+                return result
+        except Exception:
+            pass
+
+        return {"known": [], "gaps": missing_points[:3], "focus": missing_points[0]}
+
+    def targeted_explain(
+        self,
+        concept_title: str,
+        student_answer: str,
+        missing_points: List[str],
+        language: str = "en",
+    ) -> TutorTurn:
+        """
+        Explain ONLY what the student is missing — not what they already know.
+        Uses LLM when available; falls back to the existing correct_failed_answer logic.
+        """
+        if not missing_points:
+            check = f"Check: In your own words, define {concept_title}."
+            return TutorTurn(
+                message=f"Great attempt! Try to be a bit more precise.\n\n{check}",
+                next_check=check,
+                target_concept=concept_title,
+            )
+
+        diagnosis = self.diagnose_gaps(concept_title, student_answer, missing_points, language)
+        known = diagnosis.get("known", [])
+        gaps = diagnosis.get("gaps", missing_points[:3])
+        focus = diagnosis.get("focus", missing_points[0])
+
+        msg_parts = []
+        if known:
+            good = "; ".join(str(k) for k in known[:2])
+            msg_parts.append(f"You already understand: {good}.")
+
+        msg_parts.append(f"The key gap is: {focus}")
+
+        if len(gaps) > 1:
+            extra = "; ".join(str(g) for g in gaps[1:3])
+            msg_parts.append(f"Also missing: {extra}.")
+
+        check = f"Check: In one sentence, explain {concept_title} — include the key idea above."
+        msg_parts.append(f"\n{check}")
+
+        return TutorTurn(
+            message="\n".join(msg_parts),
+            next_check=check,
+            target_concept=concept_title,
+        )
