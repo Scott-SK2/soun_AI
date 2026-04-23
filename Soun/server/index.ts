@@ -79,11 +79,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Serve the app on port 5000 to match Replit workflow expectations
-  // this serves both the API and the client.
-  const port = 5000;
-  // "0.0.0.0" is not supported on Windows — use "127.0.0.1" for local dev
-  const host = process.env.HOST ?? "127.0.0.1";
+  // PORT is set dynamically by Render; defaults to 5000 locally
+  const port = parseInt(process.env.PORT ?? "5000");
+  const host = process.env.HOST ?? "0.0.0.0";
   server.listen(port, host, () => {
     log(`serving on http://${host}:${port}`);
   });

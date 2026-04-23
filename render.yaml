@@ -1,0 +1,32 @@
+services:
+  # ── FastAPI — LLM microservice ─────────────────────────────────────────────
+  - type: web
+    name: soun-ai-api
+    runtime: python
+    rootDir: api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: LLM_BACKEND
+        value: openai          # change to "local" if you deploy Phi-3 (needs disk)
+      - key: OPENAI_API_KEY
+        sync: false            # set manually in Render dashboard (secret)
+      - key: PYTHON_VERSION
+        value: "3.11"
+
+  # ── Soun — Node.js full-stack app ─────────────────────────────────────────
+  - type: web
+    name: soun-app
+    runtime: node
+    rootDir: Soun
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false            # set manually in Render dashboard (secret)
+      - key: SOUN_AI_URL
+        value: https://soun-ai-api.onrender.com   # update with your actual FastAPI URL
+      - key: SESSION_SECRET
+        generateValue: true    # Render generates a random secret automatically
