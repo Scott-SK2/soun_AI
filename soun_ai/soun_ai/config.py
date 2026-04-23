@@ -74,9 +74,13 @@ LLM_MODEL: str = os.environ.get("LLM_MODEL", "gpt-4o")
 LLM_MAX_TOKENS: int = 2048
 LLM_TEMPERATURE: float = 0.4
 
+# ── Groq backend (free cloud LLM — no compilation needed) ────────────────
+GROQ_API_KEY: str = os.environ.get("GROQ_API_KEY", "")
+
 # ── Local LLM backend (Phi-3 Mini / any GGUF model) ───────────────────────
 # Set LLM_BACKEND=local in .env to use Phi-3 Mini instead of OpenAI (free!)
-LLM_BACKEND: str = os.environ.get("LLM_BACKEND", "openai")   # "openai" | "local"
+# Set LLM_BACKEND=groq in .env to use Groq free API (Llama-3, no GPU needed)
+LLM_BACKEND: str = os.environ.get("LLM_BACKEND", "openai")   # "openai" | "local" | "groq"
 LOCAL_MODEL_PATH: str = os.environ.get(
     "LOCAL_MODEL_PATH", "./models/Phi-3-mini-4k-instruct-q4.gguf"
 )

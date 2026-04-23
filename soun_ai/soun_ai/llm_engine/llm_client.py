@@ -2,6 +2,7 @@
 Unified LLM client — picks the right backend based on LLM_BACKEND env var.
 
   LLM_BACKEND=openai  (default) → OpenAI GPT-4o  (requires OPENAI_API_KEY)
+  LLM_BACKEND=groq              → Groq Llama-3   (free, requires GROQ_API_KEY)
   LLM_BACKEND=local             → Phi-3 Mini GGUF (free, no key needed)
 
 Usage — drop-in, identical to importing openai_client directly:
@@ -35,6 +36,8 @@ def _backend_module():
     backend = _BACKEND
     if backend == "local":
         from llm_engine import local_llm as _mod
+    elif backend == "groq":
+        from llm_engine import groq_client as _mod  # type: ignore[assignment]
     else:
         if backend != "openai":
             log.warning("Unknown LLM_BACKEND=%r — falling back to 'openai'", backend)

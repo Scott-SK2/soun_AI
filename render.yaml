@@ -1,25 +1,17 @@
 services:
-  # ── FastAPI — LLM microservice (Phi-3 Mini on persistent disk) ────────────
+  # ── FastAPI — LLM microservice (Groq free API) ────────────────────────────
   - type: web
     name: soun-ai-api
     runtime: python
-    plan: standard              # Standard plan required for 2 GB RAM (Phi-3 Mini)
+    plan: starter               # Free Groq API — no heavy model needed
     rootDir: api
     buildCommand: CMAKE_ARGS="-DGGML_CUDA=OFF -DGGML_METAL=OFF -DGGML_BLAS=OFF" pip install -r requirements.txt
-    startCommand: python start.py
-    disk:
-      name: model-storage
-      mountPath: /data
-      sizeGB: 5                 # 5 GB — Phi-3 Mini GGUF is ~2.4 GB
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: LLM_BACKEND
-        value: local            # Use Phi-3 Mini — set to "openai" to switch back
-      - key: LOCAL_MODEL_PATH
-        value: /data/models/Phi-3-mini-4k-instruct-q4.gguf
-      - key: LOCAL_N_CTX
-        value: "2048"           # Lower context to reduce RAM usage
-      - key: LOCAL_N_THREADS
-        value: "2"              # Render Standard has 2 vCPUs
+        value: groq             # Free Llama-3 via Groq API
+      - key: GROQ_API_KEY
+        sync: false             # Set manually in Render dashboard (get free key at console.groq.com)
       - key: PYTHON_VERSION
         value: "3.11"
 
