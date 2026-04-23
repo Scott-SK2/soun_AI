@@ -13,3 +13,7 @@ python-pptx>=0.6.23
 Pillow>=10.0.0
 easyocr>=1.7.1
 certifi>=2024.0.0
+
+# Local LLM backend (Phi-3 Mini via llama.cpp)
+llama-cpp-python>=0.2.90
+huggingface_hub>=0.23.0
