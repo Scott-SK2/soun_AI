@@ -82,11 +82,9 @@ app.use((req, res, next) => {
   // Serve the app on port 5000 to match Replit workflow expectations
   // this serves both the API and the client.
   const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  // "0.0.0.0" is not supported on Windows — use "127.0.0.1" for local dev
+  const host = process.env.HOST ?? "127.0.0.1";
+  server.listen(port, host, () => {
+    log(`serving on http://${host}:${port}`);
   });
 })();
