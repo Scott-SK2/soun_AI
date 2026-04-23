@@ -5,7 +5,7 @@ services:
     runtime: python
     plan: standard              # Standard plan required for 2 GB RAM (Phi-3 Mini)
     rootDir: api
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu -r requirements.txt
     startCommand: python start.py
     disk:
       name: model-storage
@@ -28,7 +28,7 @@ services:
     name: soun-app
     runtime: node
     rootDir: Soun
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
