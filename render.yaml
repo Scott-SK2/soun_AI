@@ -5,7 +5,7 @@ services:
     runtime: python
     plan: standard              # Standard plan required for 2 GB RAM (Phi-3 Mini)
     rootDir: api
-    buildCommand: pip install --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu -r requirements.txt
+    buildCommand: CMAKE_ARGS="-DGGML_CUDA=OFF -DGGML_METAL=OFF -DGGML_BLAS=OFF" pip install -r requirements.txt
     startCommand: python start.py
     disk:
       name: model-storage
