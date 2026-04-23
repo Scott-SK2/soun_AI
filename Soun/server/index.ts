@@ -9,6 +9,7 @@ import { setupVite, serveStatic, log } from "./vite";
 const PostgresSessionStore = connectPg(session);
 
 const app = express();
+app.set("trust proxy", 1); // trust Render's reverse proxy so secure cookies work over HTTPS
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
